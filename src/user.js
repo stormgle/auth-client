@@ -1,6 +1,6 @@
 "use strict"
 
-const xhr = require('./xhttp');
+const xhr = require('simple-json-xhr');
 
 const USER = 'me';
 

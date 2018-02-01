@@ -1,6 +1,6 @@
 {
-  "name": "utils",
-  "version": "1.0.0",
+  "name": "auth-utils",
+  "version": "1.0.1",
   "description": "A utility library for client authentication",
   "main": "dist/exports.js",
   "repository": {
@@ -17,5 +17,8 @@
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1"
+  },
+  "dependencies": {
+    "simple-json-xhr": "^1.0.0"
   }
 }

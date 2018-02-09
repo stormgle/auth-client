@@ -5,7 +5,7 @@
   "main": "dist/auth.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/duongtdn/auth-client"
+    "url": "git+https://github.com/stormgle/auth-client"
   },
   "scripts": {
     "clean": "rm -rf dist/",

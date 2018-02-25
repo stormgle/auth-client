@@ -23,26 +23,47 @@ export function loginByPassword(endPoint, credential, { onSuccess, onFailure }) 
   if (credential && credential.password) {
     xhr.postJSON(endPoint, credential,
       {
-        onSuccess(data) {
+        onSuccess({status, data}) {
           _storeUserData(data);
           _emit.call(auth, 'onStateChange', 'authenticated');
           onSuccess && onSuccess(data.user);
         },
-        onFailure(err) {
+        onFailure({status, err}) {
           _emit.call(auth, 'onStateChange', 'unauthenticated');
-          onFailure && onFailure(err);
+          if (status >= 500) {
+            onFailure && onFailure(status);  // indicate server error
+          } else {
+            onFailure && onFailure(err);
+          }          
         }
       }
     );
   } else {
     _emit.call(auth, 'onStateChange', 'unauthenticated');
-    onFailure('password field is undefined');
+    onFailure({code: 401, err: 'password field is undefined'});
   }
 }
 
 export function logout() {
   _unstoreUserData();
   _emit.call(auth, 'onStateChange', 'unauthenticated');
+}
+
+export function signup(endPoint, credential, { onSuccess, onFailure }) {
+  xhr.postJSON(
+    endPoint,
+    credential,
+    {
+      onSuccess({status, data}) {
+        _storeUserData(data);
+        _emit.call(auth, 'onStateChange', 'authenticated');
+        onSuccess && onSuccess(data.user);
+      },
+      onFailure({status, err}) {
+        onFailure && onFailure(err);
+      }
+    }
+  )
 }
 
 export function isLoggedUser() { // not tested
@@ -59,6 +80,21 @@ export function getUser() {
 
 export function getToken(service) {
   return _getData('tokens')[service];
+}
+
+export function checkUserExist(endPoint, query, { onSuccess, onFailure }) {
+  xhr.postJSON(
+    endPoint,
+    query,
+    {
+      onSuccess({status, data}) {
+        onSuccess && onSuccess(data.user);
+      },
+      onFailure({status, err}) {
+        onFailure && onFailure(err);
+      }
+    }
+  )
 }
 
 function onStateChange(callback) {

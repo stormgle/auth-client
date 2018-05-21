@@ -21,23 +21,23 @@ const auth = {
 
 export function loginByPassword(endPoint, credential, { onSuccess, onFailure }) {
   if (credential && credential.password) {
-    xhr.postJSON(endPoint, credential,
-      {
-        onSuccess({status, data}) {
-          _storeUserData(data);
-          _emit.call(auth, 'onStateChange', 'authenticated');
-          onSuccess && onSuccess(data.user);
-        },
-        onFailure({status, err}) {
-          _emit.call(auth, 'onStateChange', 'unauthenticated');
-          if (status >= 500) {
-            onFailure && onFailure(status);  // indicate server error
-          } else {
-            onFailure && onFailure(err);
-          }          
-        }
+    xhr.postJSON({
+      endPoint, 
+      data: credential,
+      onSuccess({status, data}) {
+        _storeUserData(data);
+        _emit.call(auth, 'onStateChange', 'authenticated');
+        onSuccess && onSuccess(data.user);
+      },
+      onFailure({status, err}) {
+        _emit.call(auth, 'onStateChange', 'unauthenticated');
+        if (status >= 500) {
+          onFailure && onFailure(status);  // indicate server error
+        } else {
+          onFailure && onFailure(err);
+        }          
       }
-    );
+    });
   } else {
     _emit.call(auth, 'onStateChange', 'unauthenticated');
     onFailure({code: 401, err: 'password field is undefined'});
@@ -50,20 +50,19 @@ export function logout() {
 }
 
 export function signup(endPoint, credential, { onSuccess, onFailure }) {
-  xhr.postJSON(
+  xhr.postJSON({
     endPoint,
-    credential,
-    {
-      onSuccess({status, data}) {
-        _storeUserData(data);
-        _emit.call(auth, 'onStateChange', 'authenticated');
-        onSuccess && onSuccess(data.user);
-      },
-      onFailure({status, err}) {
-        onFailure && onFailure(err);
-      }
+    data: credential,
+    
+    onSuccess({status, data}) {
+      _storeUserData(data);
+      _emit.call(auth, 'onStateChange', 'authenticated');
+      onSuccess && onSuccess(data.user);
+    },
+    onFailure({status, err}) {
+      onFailure && onFailure(err);
     }
-  )
+  })
 }
 
 export function isLoggedUser() { // not tested

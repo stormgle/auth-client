@@ -97,6 +97,11 @@ export function checkUserExist(endPoint, query, { onSuccess, onFailure }) {
   )
 }
 
+export function isEmail(str) {
+  const emailPatt = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return emailPatt.test(str);
+}
+
 function onStateChange(callback) {
 
   const stateChangeFn = (state) => {

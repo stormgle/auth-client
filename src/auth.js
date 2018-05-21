@@ -53,7 +53,6 @@ export function signup(endPoint, credential, { onSuccess, onFailure }) {
   xhr.postJSON({
     endPoint,
     data: credential,
-    
     onSuccess({status, data}) {
       _storeUserData(data);
       _emit.call(auth, 'onStateChange', 'authenticated');
@@ -82,18 +81,16 @@ export function getToken(service) {
 }
 
 export function checkUserExist(endPoint, query, { onSuccess, onFailure }) {
-  xhr.postJSON(
+  xhr.postJSON({
     endPoint,
-    query,
-    {
-      onSuccess({status, data}) {
-        onSuccess && onSuccess(data.user);
-      },
-      onFailure({status, err}) {
-        onFailure && onFailure(err);
-      }
+    data: query,      
+    onSuccess({status, data}) {
+      onSuccess && onSuccess(data.user);
+    },
+    onFailure({status, err}) {
+      onFailure && onFailure(err);
     }
-  )
+  })
 }
 
 export function isEmail(str) {

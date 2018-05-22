@@ -128,7 +128,7 @@ function _storeUserData(data) {
 
 function _emit(event, ...args) {
   if (this._eventHandlers[event]) {
-    this._eventHandlers[event].forEach(handler => handler.call(this, args));
+    this._eventHandlers[event].forEach(handler => handler.call(this, ...args));
   }
   return this;
 }

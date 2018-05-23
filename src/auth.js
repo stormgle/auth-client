@@ -16,6 +16,7 @@ const auth = {
   isLoggedUser,
   getUser,
   getToken,
+  authGet,
   onStateChange
 }
 
@@ -60,6 +61,22 @@ export function signup(endPoint, credential, { onSuccess, onFailure }) {
     },
     onFailure({status, err}) {
       onFailure && onFailure(err);
+    }
+  })
+}
+
+export function authGet({ endPoint, service, data, onSuccess, onFailure }) {
+  const token = getToken(service);
+  const header = { Authorization: `Bearer ${token}` }
+  xhr.getJSON({
+    endPoint,
+    header,
+    data,
+    onSuccess({ status, data }) {
+      console.log(data)
+    },
+    onFailure({ status, err }) {
+      console.log(err)
     }
   })
 }

@@ -72,12 +72,8 @@ export function authGet({ endPoint, service, data, onSuccess, onFailure }) {
     endPoint,
     header,
     data,
-    onSuccess({ status, data }) {
-      console.log(data)
-    },
-    onFailure({ status, err }) {
-      console.log(err)
-    }
+    onSuccess,
+    onFailure
   })
 }
 

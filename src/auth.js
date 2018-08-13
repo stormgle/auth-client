@@ -17,6 +17,7 @@ const auth = {
   getUser,
   getToken,
   authGet,
+  authPost,
   onStateChange
 }
 
@@ -69,6 +70,22 @@ export function authGet({ endPoint, service, data, onSuccess, onFailure }) {
   const token = getToken(service);
   const header = { Authorization: `Bearer ${token}` }
   xhr.getJSON({
+    endPoint,
+    header,
+    data,
+    onSuccess({status, data}) {
+      onSuccess && onSuccess(data.data);
+    },
+    onFailure({status, err}) {
+      onFailure && onFailure({status, err});
+    }
+  })
+}
+
+export function authPost({ endPoint, service, data, onSuccess, onFailure }) {
+  const token = getToken(service);
+  const header = { Authorization: `Bearer ${token}` }
+  xhr.postJSON({
     endPoint,
     header,
     data,

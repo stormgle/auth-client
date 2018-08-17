@@ -107,7 +107,23 @@ export function isLoggedUser() { // not tested
 }
 
 export function getUser() {
-  return _getData('user');
+  const user = _getData('user');
+  user.update = _updateUser;
+  return user;
+}
+
+function _updateUser(data) {
+  const user = _getData('user');
+  if (data) {
+    for (let prop in data) {
+      if (user[prop]) {
+        user[prop] = {...user[prop], ...data[prop]}
+      } else {
+        user[prop] = data[prop];
+      }
+    }
+  }
+  console.log(user)
 }
 
 export function getToken(service) {

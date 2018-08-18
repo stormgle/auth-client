@@ -108,12 +108,15 @@ export function isLoggedUser() { // not tested
 
 export function getUser() {
   const user = _getData('user');
-  user.update = _updateUser;
+  if (user) {
+    user.update = _updateUser;
+  }
   return user;
 }
 
 function _updateUser(data) {
-  const user = _getData('user');
+  const _stored = _getData();
+  const user = _stored.user;
   if (data) {
     for (let prop in data) {
       if (user[prop]) {
@@ -122,8 +125,8 @@ function _updateUser(data) {
         user[prop] = data[prop];
       }
     }
+    _storeUserData(_stored);
   }
-  console.log(user)
 }
 
 export function getToken(service) {
@@ -187,7 +190,7 @@ function _getData(key) {
   if (typeof(Storage) !== "undefined") {
     const data = localStorage.getItem(USER);
     if (data) {
-      return JSON.parse(data)[key];
+      return key ? JSON.parse(data)[key] : JSON.parse(data);
     } else {
       return undefined;
     }

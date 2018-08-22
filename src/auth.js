@@ -10,6 +10,7 @@ const USER = 'me';
 
 const auth = {
   _eventHandlers : {},
+  _options: { cookies: [] },
   _emit,
   loginByPassword,
   logout,
@@ -21,6 +22,13 @@ const auth = {
   onStateChange
 }
 
+auth.use = function({cookie = false}) {
+  if (cookie) {
+    auth._options.cookies.push(cookie);
+  }
+  return auth;
+}
+
 export function loginByPassword(endPoint, credential, { onSuccess, onFailure }) {
   if (credential && credential.password) {
     xhr.postJSON({
@@ -28,6 +36,7 @@ export function loginByPassword(endPoint, credential, { onSuccess, onFailure }) 
       data: credential,
       onSuccess({status, data}) {
         _storeUserData(data);
+        _setAuthCookies(data);
         _emit.call(auth, 'onStateChange', 'authenticated');
         onSuccess && onSuccess(data.user);
       },
@@ -57,6 +66,7 @@ export function signup(endPoint, credential, { onSuccess, onFailure }) {
     data: credential,
     onSuccess({status, data}) {
       _storeUserData(data);
+      _setAuthCookies(data);
       _emit.call(auth, 'onStateChange', 'authenticated');
       onSuccess && onSuccess(data.user);
     },
@@ -207,6 +217,47 @@ function _unstoreUserData() {
     // Sorry! No Web Storage support..
     throw new Error("No Web Storage support") 
   }
+}
+
+function _setAuthCookies(data) {
+  if (!auth._options.cookie) {
+    return
+  }
+  const cookies = auth._options.cookies;
+  cookies.forEach( cookie => {
+    if (typeof cookie === 'string') {
+      console.log('set cookie');
+      if (data && data.tokens && data.tokens[cookie]) {
+        const value = data.tokens[cookie]
+        _setCookie(cookie, value)
+      }  
+    }
+  })
+}
+
+function _setCookie(cname, cvalue, exdays) {
+  let expires = '';
+  if (exdays) {
+    const d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    expires = "expires="+d.toUTCString();
+  }
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function _getCookie(cname) {
+  const name = cname + "=";
+  const ca = document.cookie.split(';');
+  for(let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+      }
+  }
+  return "";
 }
 
 export default auth;

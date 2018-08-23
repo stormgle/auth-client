@@ -56,6 +56,7 @@ export function loginByPassword(endPoint, credential, { onSuccess, onFailure }) 
 }
 
 export function logout() {
+  _clearAuthCookies();
   _unstoreUserData();
   _emit.call(auth, 'onStateChange', 'unauthenticated');
 }
@@ -220,28 +221,36 @@ function _unstoreUserData() {
 }
 
 function _setAuthCookies(data) {
-  if (!auth._options.cookie) {
+  __updateAuthCookies(data, 'set')
+}
+
+function _clearAuthCookies() {
+  const data = _getData();
+  __updateAuthCookies(data, 'clear')
+}
+
+function __updateAuthCookies(data, action) {
+  if (!auth._options.cookies) {
     return
   }
   const cookies = auth._options.cookies;
   cookies.forEach( cookie => {
     if (typeof cookie === 'string') {
-      console.log('set cookie');
       if (data && data.tokens && data.tokens[cookie]) {
-        const value = data.tokens[cookie]
-        _setCookie(cookie, value)
+        if (action === 'set') {
+          const value = data.tokens[cookie];
+          _setCookie(cookie, value);
+        } else {
+          const expires = 'Thu, 01 Jan 1970 00:00:00 UTC';
+          _setCookie(cookie, '', expires)
+        }
       }  
     }
   })
 }
 
 function _setCookie(cname, cvalue, exdays) {
-  let expires = '';
-  if (exdays) {
-    const d = new Date();
-    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-    expires = "expires="+d.toUTCString();
-  }
+  let expires = exdays ? `expires=${exdays}` : '';
   document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
 

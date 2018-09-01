@@ -42,11 +42,7 @@ export function loginByPassword(endPoint, credential, { onSuccess, onFailure }) 
       },
       onFailure({status, err}) {
         _emit.call(auth, 'onStateChange', 'unauthenticated');
-        if (status >= 500) {
-          onFailure && onFailure(status);  // indicate server error
-        } else {
-          onFailure && onFailure(err);
-        }          
+        onFailure && onFailure(status);     
       }
     });
   } else {

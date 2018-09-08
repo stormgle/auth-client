@@ -133,7 +133,7 @@ function _updateUser(data) {
       }
     }
     _storeUserData(_stored);
-    _emit.call(auth, 'onStateChange', 'updated');
+    // _emit.call(auth, 'onStateChange', 'updated');
   }
 }
 

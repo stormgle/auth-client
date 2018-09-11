@@ -47,7 +47,7 @@ export function loginByPassword(endPoint, credential, { onSuccess, onFailure }) 
     });
   } else {
     _emit.call(auth, 'onStateChange', 'unauthenticated');
-    onFailure({code: 401, err: 'password field is undefined'});
+    onFailure(400);
   }
 }
 

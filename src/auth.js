@@ -126,11 +126,15 @@ function _updateUser(data) {
   const user = _stored.user;
   if (data) {
     for (let prop in data) {
-      if (user[prop]) {
-        user[prop] = {...user[prop], ...data[prop]}
-      } else {
-        user[prop] = data[prop];
-      }
+      /* commented out
+        when merging, removed data will not be updated,
+      */
+      // if (user[prop]) {
+      //   user[prop] = {...user[prop], ...data[prop]}
+      // } else {
+      //   user[prop] = data[prop];
+      // }
+      user[prop] = data[prop];
     }
     _storeUserData(_stored);
     _emit.call(auth, 'onStateChange', 'updated');

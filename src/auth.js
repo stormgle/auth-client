@@ -6,6 +6,8 @@
 
 import xhr  from 'simple-json-xhr'
 
+import xsite from './xsite'
+
 const USER = 'me';
 
 const auth = {
@@ -19,7 +21,16 @@ const auth = {
   getToken,
   authGet,
   authPost,
-  onStateChange
+  onStateChange,
+  xsite
+}
+
+auth.xsite.onReceivedToken = (data) => {
+  _loginByToken(data);
+}
+
+auth.xsite.getUserData = () => {
+  return _getData();
 }
 
 auth.use = function({cookie = false}) {
@@ -35,9 +46,7 @@ export function loginByPassword(endPoint, credential, { onSuccess, onFailure }) 
       endPoint, 
       data: credential,
       onSuccess({status, data}) {
-        _storeUserData(data);
-        _setAuthCookies(data);
-        _emit.call(auth, 'onStateChange', 'authenticated');
+        _loginByToken(data);
         onSuccess && onSuccess(data.user);
       },
       onFailure({status, err}) {
@@ -49,6 +58,12 @@ export function loginByPassword(endPoint, credential, { onSuccess, onFailure }) 
     _emit.call(auth, 'onStateChange', 'unauthenticated');
     onFailure(400);
   }
+}
+
+function _loginByToken(data) {
+  _storeUserData(data);
+  _setAuthCookies(data);
+  _emit.call(auth, 'onStateChange', 'authenticated');
 }
 
 export function logout() {

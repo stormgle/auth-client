@@ -14,6 +14,7 @@ const auth = {
   _eventHandlers : {},
   _options: { cookies: [] },
   _emit,
+  signup,
   loginByPassword,
   logout,
   isLoggedUser,
@@ -22,11 +23,12 @@ const auth = {
   authGet,
   authPost,
   onStateChange,
+  loginByToken,
   xsite
 }
 
 auth.xsite.onReceivedToken = (data) => {
-  _loginByToken(data);
+  loginByToken(data);
 }
 
 auth.xsite.getUserData = () => {
@@ -46,7 +48,7 @@ export function loginByPassword(endPoint, credential, { onSuccess, onFailure }) 
       endPoint, 
       data: credential,
       onSuccess({status, data}) {
-        _loginByToken(data);
+        loginByToken(data);
         onSuccess && onSuccess(data.user);
       },
       onFailure({status, err}) {
@@ -60,7 +62,7 @@ export function loginByPassword(endPoint, credential, { onSuccess, onFailure }) 
   }
 }
 
-function _loginByToken(data) {
+export function loginByToken(data) {
   _storeUserData(data);
   _setAuthCookies(data);
   _emit.call(auth, 'onStateChange', 'authenticated');
@@ -72,15 +74,14 @@ export function logout() {
   _emit.call(auth, 'onStateChange', 'unauthenticated');
 }
 
-export function signup(endPoint, credential, { onSuccess, onFailure }) {
+export function signup(endPoint, credential, { autoLoginAfterSingup=true, onSuccess, onFailure }) {
   xhr.postJSON({
     endPoint,
     data: credential,
     onSuccess({status, data}) {
-      _storeUserData(data);
-      _setAuthCookies(data);
-      _emit.call(auth, 'onStateChange', 'authenticated');
-      onSuccess && onSuccess(data.user);
+      autoLoginAfterSingup && loginByToken(data);
+      autoLoginAfterSingup && _emit.call(auth, 'onStateChange', 'authenticated');
+      onSuccess && onSuccess(data);
     },
     onFailure({status, err}) {
       onFailure && onFailure(err);

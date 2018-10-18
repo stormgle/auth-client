@@ -74,13 +74,13 @@ export function logout() {
   _emit.call(auth, 'onStateChange', 'unauthenticated');
 }
 
-export function signup(endPoint, credential, { autoLoginAfterSingup=true, onSuccess, onFailure }) {
+export function signup(endPoint, credential, { autoLoginAfterSignup=true, onSuccess, onFailure }) {
   xhr.postJSON({
     endPoint,
     data: credential,
     onSuccess({status, data}) {
-      autoLoginAfterSingup && loginByToken(data);
-      autoLoginAfterSingup && _emit.call(auth, 'onStateChange', 'authenticated');
+      autoLoginAfterSignup && loginByToken(data);
+      autoLoginAfterSignup && _emit.call(auth, 'onStateChange', 'authenticated');
       onSuccess && onSuccess(data);
     },
     onFailure({status, err}) {

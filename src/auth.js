@@ -49,7 +49,7 @@ export function loginByPassword(endPoint, credential, { onSuccess, onFailure }) 
       data: credential,
       onSuccess({status, data}) {
         loginByToken(data);
-        onSuccess && onSuccess(data.user);
+        onSuccess && onSuccess(data);
       },
       onFailure({status, err}) {
         _emit.call(auth, 'onStateChange', 'unauthenticated');

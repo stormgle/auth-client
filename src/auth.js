@@ -191,9 +191,10 @@ function onStateChange(callback) {
     this._eventHandlers['onStateChange'] = [stateChangeFn];
   }
 
-  /* if user logged status is stored invoke callback */
   if (isLoggedUser()) {
     callback.call(this, 'authenticated', getUser());
+  } else {
+    callback.call(this, 'unauthenticated', null);
   }
 
 }
